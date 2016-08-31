@@ -21,8 +21,9 @@ typedef struct _TCB
 extern TCB* pTCB; 
 extern TCB TASK[2];
 
-#define save_switch\
-	asm volatile ("push  r0\n\t"\
+#define save_switch()\
+	asm volatile (\
+	"push  r0\n\t"\
 	"in r0,__SREG__\n\t"\
 	"push  r0\n\t"\
 	"push  r1\n\t"\
@@ -65,8 +66,10 @@ extern TCB TASK[2];
 );
 #define restore_switch()\
 	asm volatile (\
-	"lds r17,pTCB+2\n\t"\
-	"lds r18,pTCB+1\n\t"\
+	"sts pTCB,r26\n\t"\
+	"sts pTCB+1,r27\n\t"\
+	"ld r17,x+\n\t"\
+	"ld r18,x+\n\t"\
 	"out 0x3d,r17\n\t"\
 	"out 0x3e,r18\n\t"\
 	"pop r31\n\t"\

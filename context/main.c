@@ -36,9 +36,9 @@ ISR (TIMER1_COMPA_vect) {
 	//if(!allocate_space())
 	//{	
 		cli();
-		pTCB_SWP(1);
-		save_switch;
-		pTCB_SWP(1);
+		pTCB_SWP(count%2);
+		save_switch();
+		pTCB_SWP(!(count%2));
 		restore_switch();
 		count++;
 		sei();
