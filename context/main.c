@@ -4,13 +4,8 @@
  * Created: 2016/08/30 下午 02:34:07
  * Author : bohung
  */ 
-#define F_CPU 16000000
-#include <util/delay.h>
-#include <avr/interrupt.h>
-#include <avr/io.h>
-#include "core.h"
-uint8_t count=0;
-TCB TASK[2];
+
+#include "main.h"
 void TASK1()
 {
 	while(1)asm("ldi r16,0xFC");
@@ -39,8 +34,10 @@ int main(void)
 }
 ISR (TIMER1_COMPA_vect) {
 	cli();
-	save_switch(&(TASK[0]));
-	restore_switch(&(TASK[1]));
+	pTCB_SWP(count);
+	save_switch();
+	pTCB_SWP(!count);
+	restore_switch();
 	count++;
 	sei();
 }

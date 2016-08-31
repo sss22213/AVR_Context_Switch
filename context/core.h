@@ -22,7 +22,13 @@ typedef struct _TCB
 	uint8_t SP_Lo;
 	void (*pTASK)(void);
 }TCB;
-#define save_switch(pTCB)\
+TCB* pTCB; 
+TCB TASK[2];
+#define pTCB_SWP(counter)\
+	pTCB=&TASK[counter];
+
+	
+#define save_switch()\
 	asm volatile ("push  r0\n\t"\
 	"in r0,__SREG__\n\t"\
 	"push  r0\n\t"\
@@ -64,6 +70,46 @@ typedef struct _TCB
 );
 
 void allocate_space(TCB*);
-extern inline void restore_switch(TCB*);
+#define restore_switch()\
+	asm volatile (\
+	"lds r17,(pTCB)+1\n\t"\
+	"lds r18,(pTCB)+2\n\t"\
+	"out 0x3d,r17\n\t"\
+	"out 0x3e,r18\n\t"\
+	"pop r31\n\t"\
+	"pop r30\n\t"\
+	"pop r29\n\t"\
+	"pop r28\n\t"\
+	"pop r27\n\t"\
+	"pop r26\n\t"\
+	"pop r25\n\t"\
+	"pop r24\n\t"\
+	"pop r23\n\t"\
+	"pop r22\n\t"\
+	"pop r21\n\t"\
+	"pop r20\n\t"\
+	"pop r19\n\t"\
+	"pop r18\n\t"\
+	"pop r17\n\t"\
+	"pop r16\n\t"\
+	"pop r15\n\t"\
+	"pop r14\n\t"\
+	"pop r13\n\t"\
+	"pop r12\n\t"\
+	"pop r11\n\t"\
+	"pop r10\n\t"\
+	"pop r9\n\t"\
+	"pop r8\n\t"\
+	"pop r7\n\t"\
+	"pop r6\n\t"\
+	"pop r5\n\t"\
+	"pop r4\n\t"\
+	"pop r3\n\t"\
+	"pop r2\n\t"\
+	"pop r1\n\t"\
+	"pop r0\n\t"\
+	"out __SREG__,r0\n\t"\
+	"pop r0\n\t"\
+	);
 
 #endif /* CORE_H_ */
