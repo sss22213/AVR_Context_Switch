@@ -15,6 +15,10 @@
 #include <avr/io.h>
 #include "core.h"
 uint8_t count=0;
-extern TCB TASK[2];
+TCB* pTCB;
+TCB TASK[2];
+void pTCB_SWP(int counter) {pTCB=&(TASK[counter]);}
+
+
 
 #endif /* MAIN_H_ */

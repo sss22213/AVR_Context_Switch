@@ -5,9 +5,13 @@
  *  Author: bohung
  */ 
 #include "core.h"
-void allocate_space(TCB* TASK)
-{
-	//first
-	TASK->pTASK();
-	
+uint8_t allocate_space() {
+	if(!pTCB->count)
+	{
+		asm("lds r18,(pTCB)+2 ");
+		asm("push r18");
+		pTCB->count++;
+		return 1;
+	}
+	return 0;
 }

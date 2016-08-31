@@ -33,12 +33,15 @@ int main(void)
     }
 }
 ISR (TIMER1_COMPA_vect) {
-	cli();
-	pTCB_SWP(count);
-	save_switch();
-	pTCB_SWP(!count);
-	restore_switch();
-	count++;
-	sei();
+	//if(!allocate_space())
+	//{	
+		cli();
+		pTCB_SWP(1);
+		save_switch;
+		pTCB_SWP(1);
+		restore_switch();
+		count++;
+		sei();
+	//}
 }
 

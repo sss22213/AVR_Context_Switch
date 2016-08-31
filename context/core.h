@@ -9,26 +9,19 @@
 #include <stdint.h>
 #include <avr/io.h>
 typedef struct _TCB TCB;
-typedef struct _Stack Stack;
-typedef struct _Stack 
-{
-	uint8_t SP_Hi;
-	uint8_t SP_Lo;
-}Stack;
 typedef struct _TCB 
 {
 	uint8_t PID;	
 	uint8_t SP_Hi;
 	uint8_t SP_Lo;
+	uint8_t count;
 	void (*pTASK)(void);
 }TCB;
-TCB* pTCB; 
-TCB TASK[2];
-#define pTCB_SWP(counter)\
-	pTCB=&TASK[counter];
 
-	
-#define save_switch()\
+extern TCB* pTCB; 
+extern TCB TASK[2];
+
+#define save_switch\
 	asm volatile ("push  r0\n\t"\
 	"in r0,__SREG__\n\t"\
 	"push  r0\n\t"\
@@ -63,17 +56,17 @@ TCB TASK[2];
 	"push  r29\n\t"\
 	"push  r30\n\t"\
 	"push  r31\n\t"\
-	"in r17,0x3d\n\t"\ 
-	"in r18,0x3e\n\t"\ 
-	"sts (pTCB)+1,r17\n\t"\
-	"sts (pTCB)+2,r18\n\t"\
+	"in r17,0x3d\n\t"\
+	"in r18,0x3e\n\t"\
+	"lds r26,pTCB\n\t"\
+	"lds r27,pTCB+1\n\t"\
+	"st x+,r17\n\t"\
+	"st x+,r18\n\t"\
 );
-
-void allocate_space(TCB*);
 #define restore_switch()\
 	asm volatile (\
-	"lds r17,(pTCB)+1\n\t"\
-	"lds r18,(pTCB)+2\n\t"\
+	"lds r17,pTCB+2\n\t"\
+	"lds r18,pTCB+1\n\t"\
 	"out 0x3d,r17\n\t"\
 	"out 0x3e,r18\n\t"\
 	"pop r31\n\t"\
@@ -111,5 +104,6 @@ void allocate_space(TCB*);
 	"out __SREG__,r0\n\t"\
 	"pop r0\n\t"\
 	);
+uint8_t allocate_space();
 
 #endif /* CORE_H_ */
